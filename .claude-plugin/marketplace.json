@@ -1,0 +1,18 @@
+{
+  "name": "happenings",
+  "description": "Happenings for Claude: run your club, student organisation or venue page from Claude.",
+  "owner": {
+    "name": "Happenings Group",
+    "url": "https://happenings.social"
+  },
+  "plugins": [
+    {
+      "name": "happenings",
+      "displayName": "Happenings",
+      "source": "./plugins/happenings",
+      "description": "Plan events, check sales and tickets, manage members and deals for the Happenings pages you run, through the Happenings connector.",
+      "version": "1.0.0",
+      "keywords": ["events", "tickets", "members", "clubs", "students"]
+    }
+  ]
+}

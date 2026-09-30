@@ -1,0 +1,10 @@
+{
+  "name": "happenings",
+  "displayName": "Happenings",
+  "version": "1.0.0",
+  "description": "Connects Claude to the Happenings pages you run and teaches it how to plan events, read sales and look after members. Sign in once with your Happenings account and pick the pages Claude may work on.",
+  "author": { "name": "Happenings Group", "url": "https://happenings.social" },
+  "homepage": "https://connect.happenings.social/beta/settings/ai",
+  "license": "MIT",
+  "keywords": ["events", "tickets", "members", "clubs", "students"]
+}

@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "happenings": {
+      "type": "http",
+      "url": "https://api.happenings.social/page/mcp"
+    }
+  }
+}
