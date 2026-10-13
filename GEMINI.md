@@ -3,12 +3,9 @@
 # Running a Happenings page
 
 Happenings is where students and clubs run their events, tickets, members
-and deals. The Happenings connector (the Happenings MCP server, `https://api.happenings.social/page/mcp`) gives you two tools:
-
-- `hap_help`: shows the page-level commands, or the help for one command.
-  Read-only.
-- `hap_run`: runs one page-level Happenings command. Pass the arguments as an
-  array without the leading `hap`. JSON output is added for you.
+and deals. The Happenings connector (the Happenings MCP server,
+`https://api.happenings.social/page/mcp`) gives you one tool per job. Tools
+that read are marked read-only; tools that change the page are not.
 
 The connection reaches only the pages the person picked when they connected,
 and only what their role on each page allows. If something is refused, say so
@@ -16,49 +13,67 @@ plainly. Do not look for a way around it.
 
 ## Start every session the same way
 
-1. `hap_run ["access","pages","list"]` to get the pages and their ids.
+1. `list_pages` to get the pages and their ids.
 2. If there is more than one page and the person did not say which, ask.
 3. Read before you change anything.
 
 ## Read first
 
-| The person asks | Run |
+| The person asks | Tool |
 |---|---|
-| What's coming up? | `["events","list","--page","<page-id>"]` |
-| One event in detail | `["events","get","<event-id-or-slug>"]` |
-| How are sales going? | `["analytics","page","--page","<page-id>","--days","30"]` |
-| Who bought what? | `["orders","list","--page","<page-id>","--page-size","50"]` |
-| Tickets for an event | `["tickets","list","--event","<event-id>"]` |
-| Who are our members? | `["members","list","--page","<page-id>","--limit","100"]` |
-| Find a member | `["members","list","--page","<page-id>","--query","<name or email>"]` |
+| What's coming up? | `list_upcoming_events` |
+| One event in detail | `get_event_overview` (shows an event card) |
+| How is this event selling? | `event_sales` (shows a sales dashboard) |
+| How are sales going overall? | `get_sales_summary` |
+| Who bought what? | `list_recent_orders` |
+| Who are our members? / find a member | `search_members` (shows a member list) |
+| A poster, QR code or link to share | `get_share_kit` (shows the poster preview) |
 
-Flags differ between commands (`--page`, `--event`, `--page-size`,
-`--limit`). When unsure, call `hap_help` with the command, for example
-`{"command": "events create"}`, instead of guessing.
+In Claude and ChatGPT these tools show a card, dashboard or poster in the
+chat. Other apps get the same data as text. Either way, still say the answer in
+a sentence.
+
+## Photos, posters and logos
+
+Remote tools cannot read files attached to the chat. So:
+
+- When the person has an image on their device or attached one, call
+  `media_upload_widget` as the only tool in that turn. It shows an upload box;
+  they pick the file, and you get back an `asset_id`.
+- For an image on the web, call `media_import_url` with the https link.
+- Then pass the `asset_id` to `set_event_cover`, `set_page_logo`,
+  `set_page_cover` or `add_album_photo`.
+
+Only images are accepted, up to 10 MB each.
 
 ## Changing things
 
-Every command that creates, edits, sends or deletes runs for real on the live
+Every tool that creates, edits, sends or publishes runs for real on the live
 page, for real members and buyers. So:
 
-1. Work out the exact command with `hap_help`.
-2. If the help lists `--dry-run`, run it with `dry_run: true` and show the
-   person what would change.
-3. If it has no `--dry-run`, show the person the exact command and what it
-   will do, in plain words.
-4. Run it only after they say yes. One change at a time.
+1. Say exactly what you will change, in plain words.
+2. Run it only after they say yes. One change at a time.
+3. Show the result, for example with `get_event_overview`.
 
-Creating an event, for example:
+A new event:
 
-```
-hap_help {"command": "events create"}
-hap_run ["events","create","--page","<page-id>","--title","Fredagsbar",
-         "--start","2026-10-09T16:00","--end","2026-10-10T00:00",
-         "--venue","Kantinen","--registration-mode","rsvp"]
-```
+1. `create_event_draft` with the title and times. Times are local Danish time,
+   `YYYY-MM-DDTHH:MM`, for example `2026-10-09T16:00`.
+2. `create_ticket_type` for each ticket. `price_minor` is in øre: 60 kr is
+   `6000`.
+3. A cover: `media_upload_widget` or `media_import_url`, then
+   `set_event_cover`.
+4. `get_event_overview` to show it, then `publish_event` after a yes.
 
-Times are `YYYY-MM-DDTHH:MM` in the page's local time. Events are public
-unless you pass `--visibility members` or `invite`.
+`send_announcement` emails the page's members and cannot be undone. Always
+show the subject and text first and wait for an explicit yes.
+
+## When no tool fits
+
+`hap_help`, `hap_read` and `hap_run` run the Happenings CLI directly, for the
+few jobs without their own tool. Read the command's help first. Use `hap_read`
+for a read, since it changes nothing and refuses anything that would, and
+`hap_run` for a change. Times passed to `hap_run` are UTC, not Danish time.
 
 ## How to answer
 
@@ -69,6 +84,6 @@ unless you pass `--visibility members` or `invite`.
   currency.
 - Write in the person's language. Many organisers write Danish: answer in
   Danish when they do.
-- If a command fails, read the error, fix the command once, and otherwise tell
-  the person what went wrong and what they can do in Connect
+- If a tool fails, read the error, fix the call once, and otherwise tell the
+  person what went wrong and what they can do in Connect
   (https://connect.happenings.social).

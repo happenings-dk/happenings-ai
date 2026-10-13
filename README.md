@@ -10,7 +10,8 @@ under Settings, then AI (`/beta/settings/ai`).
   Happenings CLI as a remote MCP server (streamable HTTP), behind OAuth 2.1
   with PKCE, dynamic client registration and RFC 9207 `iss`. Adding it takes
   only the URL; signing in picks the pages, and every command stays limited by
-  the person's role on each page. Tools: `hap_help` (read-only) and `hap_run`.
+  the person's role on each page. Tools: `hap_help` and `hap_read` (read-only)
+  and `hap_run`.
 - **The skill**: `skill/happenings.md` is the single source. `node build.mjs`
   generates every client's copy from it; a backoffice test fails when one is
   stale.
@@ -50,7 +51,18 @@ serves two bundles at once:
 - **Gemini CLI extension**: `gemini-extension.json` and `GEMINI.md`.
   `gemini extensions install https://github.com/<owner>/<repo>`
 
-The monorepo is private, so neither works until this folder is published. Set
+- **Claude plugin as a file**: `happenings-plugin.zip`, built by `build.mjs`
+  from `plugins/happenings` and served by Connect at
+  `/downloads/ai/happenings-plugin.zip`. One download holds the connector
+  (`.mcp.json`), the skill and the four commands, for adding in Claude without
+  a terminal. It is hosted on our own site and does not depend on the public
+  repository. Connect shows it as "Both in one step" when Claude is picked. The
+  public site serves the same bytes at `/skills/happenings-plugin.zip`
+  (`web/apps/user-web/scripts/sync-skills.mjs` copies it at build time) and
+  links it from `/mcp` and `/guide/mcp`.
+
+The monorepo is private, so the first two work only from the published copy of
+this folder. Set
 `HAPPENINGS_AI_REPO=<owner>/<repo>` on the backoffice Worker and Connect shows
 both commands; until then it shows the separate connector and skill steps.
 
@@ -62,3 +74,9 @@ remote connector by URL, and `.mcpb` targets local servers.
 1. Edit `skill/happenings.md`.
 2. `node integrations/ai/build.mjs`
 3. Commit the regenerated files (here and in `web/apps/backoffice/public/downloads/ai/`).
+
+The same applies after editing a plugin command or manifest, since the plugin
+zip is built from them. A new command file must be added to
+`PLUGIN_SOURCE_FILES` in `variants.mjs`; a test fails if it is not. Bump
+`version` in `plugins/happenings/.claude-plugin/plugin.json` and
+`.claude-plugin/marketplace.json` together when the plugin changes.
