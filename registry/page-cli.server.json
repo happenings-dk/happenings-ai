@@ -1,0 +1,18 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "social.happenings/page-cli",
+  "title": "Happenings Page CLI",
+  "description": "Every page-admin command of the Happenings CLI for your AI, limited to the pages you choose.",
+  "version": "1.1.0",
+  "websiteUrl": "https://happenings.social/mcp",
+  "repository": {
+    "url": "https://github.com/happenings-dk/happenings-ai",
+    "source": "github"
+  },
+  "icons": [
+    { "src": "https://happenings.social/icon.svg", "mimeType": "image/svg+xml" }
+  ],
+  "remotes": [
+    { "type": "streamable-http", "url": "https://api.happenings.social/page/mcp" }
+  ]
+}

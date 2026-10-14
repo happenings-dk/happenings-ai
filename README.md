@@ -69,6 +69,28 @@ both commands; until then it shows the separate connector and skill steps.
 A Claude Desktop extension (`.mcpb`) is not built: Desktop already takes the
 remote connector by URL, and `.mcpb` targets local servers.
 
+## MCP Registry
+
+Both page connectors are listed in the official MCP Registry
+(`registry.modelcontextprotocol.io`) as `social.happenings/page-tools` (`/mcp`)
+and `social.happenings/page-cli` (`/page/mcp`). The entries are
+`registry/*.server.json`. Directories that read the registry pick them up
+from there. The operator connector is not listed.
+
+The `social.happenings` namespace is proven by a TXT record on
+`happenings.social` (`v=MCPv1; k=ed25519; p=…`). The private key was not kept.
+To publish a change, bump `version` in the entry, then:
+
+```bash
+openssl genpkey -algorithm Ed25519 -out key.pem   # OpenSSL 3, not LibreSSL
+openssl pkey -in key.pem -pubout -outform DER | tail -c 32 | base64
+# replace the p= value of the MCPv1 TXT record in Cloudflare with that output
+mcp-publisher login dns --domain happenings.social \
+  --private-key "$(openssl pkey -in key.pem -noout -text | grep -A3 'priv:' | tail -n +2 | tr -d ' :\n')"
+mcp-publisher publish registry/page-tools.server.json
+rm key.pem
+```
+
 ## Editing the skill
 
 1. Edit `skill/happenings.md`.
