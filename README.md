@@ -6,7 +6,7 @@ under Settings, then AI (`/beta/settings/ai`).
 
 ## The two parts
 
-- **The connector**: `https://api.happenings.social/page/mcp`. The page-level
+- **The connector**: `https://api.happenings.social/mcp`. The page-level
   Happenings CLI as a remote MCP server (streamable HTTP), behind OAuth 2.1
   with PKCE, dynamic client registration and RFC 9207 `iss`. Adding it takes
   only the URL; signing in picks the pages, and every command stays limited by
@@ -22,12 +22,12 @@ under Settings, then AI (`/beta/settings/ai`).
 |---|---|---|
 | Claude (web, Desktop, app) | URL: Customize, Connectors, Add custom connector. Team/Enterprise: an owner adds it under Organization settings, Connectors | Download `happenings-skill.zip`, upload under Customize, Skills |
 | ChatGPT | URL: Settings, Apps and connectors, Advanced settings, Developer mode, Create (paid plans) | Copy `chatgpt-instructions.txt` into a project or custom GPT |
-| Claude Code | `claude mcp add --transport http happenings https://api.happenings.social/page/mcp` | `mkdir -p ~/.claude/skills/happenings && curl -fsSL https://connect.happenings.social/downloads/ai/SKILL.md -o ~/.claude/skills/happenings/SKILL.md`, or both in one: the plugin below |
+| Claude Code | `claude mcp add --transport http happenings https://api.happenings.social/mcp` | `mkdir -p ~/.claude/skills/happenings && curl -fsSL https://connect.happenings.social/downloads/ai/SKILL.md -o ~/.claude/skills/happenings/SKILL.md`, or both in one: the plugin below |
 | Cursor | Install link `cursor://anysphere.cursor-deeplink/mcp/install?name=happenings&config=…`, or `~/.cursor/mcp.json` | `.cursor/rules/happenings.mdc` |
 | VS Code (Copilot) | Install link `vscode:mcp/install?…`, or `.vscode/mcp.json` with `"type": "http"` | Append `AGENTS.md` |
 | Windsurf | `~/.codeium/windsurf/mcp_config.json` with `serverUrl` | Append `AGENTS.md` |
-| Gemini CLI | `gemini mcp add --transport http happenings https://api.happenings.social/page/mcp` | Append `GEMINI.md` to `~/.gemini/GEMINI.md`, or both in one: the extension below |
-| Codex CLI | `codex mcp add happenings --url https://api.happenings.social/page/mcp`, then `codex mcp login happenings` | Append `AGENTS.md` to `~/.codex/AGENTS.md` |
+| Gemini CLI | `gemini mcp add --transport http happenings https://api.happenings.social/mcp` | Append `GEMINI.md` to `~/.gemini/GEMINI.md`, or both in one: the extension below |
+| Codex CLI | `codex mcp add happenings --url https://api.happenings.social/mcp`, then `codex mcp login happenings` | Append `AGENTS.md` to `~/.codex/AGENTS.md` |
 
 Every client above uses the remote URL with OAuth; none needs a local stdio
 fallback. OAuth callbacks allowlisted for them: Claude
@@ -71,11 +71,13 @@ remote connector by URL, and `.mcpb` targets local servers.
 
 ## MCP Registry
 
-Both page connectors are listed in the official MCP Registry
-(`registry.modelcontextprotocol.io`) as `social.happenings/page-tools` (`/mcp`)
-and `social.happenings/page-cli` (`/page/mcp`). The entries are
-`registry/*.server.json`. Directories that read the registry pick them up
-from there. The operator connector is not listed.
+Happenings Connect is listed in the official MCP Registry
+(`registry.modelcontextprotocol.io`) as `social.happenings/connect`
+(`https://api.happenings.social/mcp`); the entry is `registry/connect.server.json`.
+Directories that read the registry pick it up from there. The earlier entries
+`social.happenings/page-tools` and `social.happenings/page-cli` are deprecated:
+`/mcp` became Happenings Connect on 2026-10-14 and `/page/mcp` is its former
+address. The operator connector is not listed.
 
 The `social.happenings` namespace is proven by a TXT record on
 `happenings.social` (`v=MCPv1; k=ed25519; p=…`). The private key was not kept.
@@ -87,7 +89,7 @@ openssl pkey -in key.pem -pubout -outform DER | tail -c 32 | base64
 # replace the p= value of the MCPv1 TXT record in Cloudflare with that output
 mcp-publisher login dns --domain happenings.social \
   --private-key "$(openssl pkey -in key.pem -noout -text | grep -A3 'priv:' | tail -n +2 | tr -d ' :\n')"
-mcp-publisher publish registry/page-tools.server.json
+mcp-publisher publish registry/connect.server.json
 rm key.pem
 ```
 

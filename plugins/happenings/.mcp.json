@@ -2,7 +2,7 @@
   "mcpServers": {
     "happenings": {
       "type": "http",
-      "url": "https://api.happenings.social/page/mcp"
+      "url": "https://api.happenings.social/mcp"
     }
   }
 }

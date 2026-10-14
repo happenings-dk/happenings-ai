@@ -1,0 +1,24 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "social.happenings/connect",
+  "title": "Happenings Connect",
+  "description": "Run your Happenings pages from your AI through the page CLI: events, tickets, sales and members.",
+  "version": "1.2.0",
+  "websiteUrl": "https://happenings.social/guide/connect",
+  "repository": {
+    "url": "https://github.com/happenings-dk/happenings-ai",
+    "source": "github"
+  },
+  "icons": [
+    {
+      "src": "https://happenings.social/icon.svg",
+      "mimeType": "image/svg+xml"
+    }
+  ],
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://api.happenings.social/mcp"
+    }
+  ]
+}

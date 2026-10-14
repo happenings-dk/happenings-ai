@@ -3,7 +3,7 @@
 // and a backoffice test regenerates them in memory to prove nothing drifted.
 import { crc32 } from "node:zlib";
 
-export const CONNECTOR_URL = "https://api.happenings.social/page/mcp";
+export const CONNECTOR_URL = "https://api.happenings.social/mcp";
 
 /** Splits `---\nfront\n---\nbody` into its frontmatter fields and body. */
 export function parseSkill(source) {

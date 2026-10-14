@@ -1,10 +1,10 @@
 {
   "name": "happenings",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Run the Happenings pages you manage from Gemini CLI: events, tickets, sales, members and deals.",
   "mcpServers": {
     "happenings": {
-      "httpUrl": "https://api.happenings.social/page/mcp"
+      "httpUrl": "https://api.happenings.social/mcp"
     }
   },
   "contextFileName": "GEMINI.md"
